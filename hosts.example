@@ -1,0 +1,3 @@
+[webservers]
+# You can also use group_vars if config values are shared.
+# hayek ansible_ssh_host=hayek.example.org ansible_ssh_port=22 ansible_ssh_user=some_user

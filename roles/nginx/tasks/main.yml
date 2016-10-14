@@ -1,0 +1,36 @@
+---
+- name: Add Nginx PPA
+  apt_repository: repo='ppa:nginx/stable' state=present
+  register: ppastable
+  tags: nginx
+
+- name: Install Nginx
+  apt: name=nginx state=present update_cache=true
+  when: ppastable|succeeded
+  register: nginxinstalled
+  notify:
+      - Start Nginx
+
+- name: Basic Nginx configuration
+  when: nginxinstalled|succeeded
+  copy: src=nginx.conf dest=/etc/nginx/nginx.conf owner=root group=root
+  notify:
+      - Reload Nginx
+
+- name: Nginx mime types
+  when: nginxinstalled|succeeded
+  copy: src=mime.types dest=/etc/nginx/mime.types owner=root group=root
+  notify:
+      - Reload Nginx
+
+- name: Nginx configuration snippets
+  when: nginxinstalled|succeeded
+  copy: src=snippets dest=/etc/nginx owner=root group=root
+  notify:
+      - Reload Nginx
+
+- name: Nginx default server
+  when: nginxinstalled|succeeded
+  copy: src=sites-available/default dest=/etc/nginx/sites-available/default
+  notify:
+      - Reload Nginx

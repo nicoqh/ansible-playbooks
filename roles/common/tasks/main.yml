@@ -1,0 +1,17 @@
+---
+
+- name: Install python2 if needed
+  raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+- name: Install some common software
+  apt: name={{ item }} state=present update_cache=true
+  with_items:
+      - curl
+      - git
+      - htop
+      - vim
+
+- name: Install NTP
+  apt: name=ntp state=present
+  tags: ntp
+  notify: Start NTP
